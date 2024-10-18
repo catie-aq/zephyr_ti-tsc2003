@@ -1,0 +1,41 @@
+# Copyright (c) 2024 CATIE
+# SPDX-License-Identifier: Apache-2.0
+
+description: |
+    Texas Instruments tsc2003 touch screen controller sensor
+
+compatible: "ti,tsc2003"
+
+include: i2c-device.yaml
+
+properties:
+  reg:
+    type: array
+    description: |
+      I2C address of the device.
+  screen_width:
+    type: int
+    required: true
+    description: Width of the touchscreen in pixels
+
+  screen_height:
+    type: int
+    required: true
+    description: Height of the touchscreen in pixels
+
+  inverted_x:
+    type: boolean
+    description: Invert the X axis
+
+  inverted_y:
+    type: boolean
+    description: Invert the Y axis
+
+  swapped_x_y:
+    type: boolean
+    description: Swap the X and Y axes
+
+  int-gpios:
+    type: phandle-array
+    description: GPIO specifier for the interrupt pin
+    

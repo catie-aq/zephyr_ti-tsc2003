@@ -1,0 +1,19 @@
+# Copyright (c) 2024 CATIE
+# SPDX-License-Identifier: Apache-2.0
+
+menuconfig TSC2003
+    bool "Texas Instruments tsc2003 touch screen controller sensor"
+    default y
+    depends on DT_HAS_TI_TSC2003_ENABLED
+    select I2C
+    help
+      Enable driver for Texas Instruments tsc2003 touch screen controller sensor.
+
+if TSC2003
+
+  config INPUT_TSC2003_INTERRUPT
+    bool "Interrupt"
+    help
+    Enable interrupt support (requires GPIO).
+
+endif # TSC2003

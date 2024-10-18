@@ -1,0 +1,30 @@
+/*
+ * Copyright (c) 2024 CATIE
+ *
+ * SPDX-License-Identifier: Apache-2.0
+ */
+
+#include <zephyr/dt-bindings/gpio/sixtron-header.h>
+
+/ {
+	chosen {
+		zephyr,touch = &tsc20030;
+	};
+	
+ };
+ 
+ &sixtron_i2c {
+	 status = "okay";
+ 
+	 tsc20030: tsc2003@48 {  
+        compatible = "ti,tsc2003";
+        reg = <0x48>;  
+        /* Define PENIRQ for touch detection if needed */
+        int-gpios = <&sixtron_connector DIO3 GPIO_ACTIVE_LOW>;  /* D3 */ 
+        screen_width = <128>;
+        screen_height = <160>;
+        inverted_x;
+        inverted_y;
+        swapped_x_y;
+	 };
+ };
