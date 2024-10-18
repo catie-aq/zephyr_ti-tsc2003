@@ -38,4 +38,23 @@ properties:
   int-gpios:
     type: phandle-array
     description: GPIO specifier for the interrupt pin
+  raw_x_min:
+    type: int
+    required: true
+    description: Minimum raw X value
+
+  raw_y_min:
+    type: int
+    required: true
+    description: Minimum raw Y value
+
+  raw_x_max:
+    type: int
+    required: true
+    description: Maximum raw X value
+
+  raw_y_max:
+    type: int
+    required: true
+    description: Maximum raw Y value
     
