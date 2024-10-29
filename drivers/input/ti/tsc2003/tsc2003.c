@@ -110,6 +110,7 @@ static void tsc2003_work_handler(struct k_work *work)
 
     gpio_remove_callback(config->int_gpio.port, &data->int_gpio_cb);
     tsc2003_process(data->dev);
+    k_sleep(K_MSEC(CONFIG_TSC2003_DEBOUNCE_MS));
     gpio_add_callback(config->int_gpio.port, &data->int_gpio_cb);
 }
 
