@@ -12,7 +12,7 @@ menuconfig TSC2003
 if TSC2003
 
   config TSC2003_DEBOUNCE_MS
-    bool "Debounce timeout millisecond"
+    int "Debounce timeout millisecond"
     default 500
     help
       Timeout value for debounce filtering (milliseconds).
