@@ -28,11 +28,6 @@ struct tsc2003_config {
 	uint16_t screen_width;
 	uint16_t screen_height;
 
-    int raw_x_min;
-    int raw_y_min;
-    uint16_t raw_x_max;
-    uint16_t raw_y_max;
-
     bool inverted_x;
     bool inverted_y;
 	bool swapped_x_y;
@@ -216,10 +211,6 @@ static int tsc2003_init(const struct device *dev)
         .reset_gpio = GPIO_DT_SPEC_INST_GET_OR(n, reset_gpios, {0}),         \
         .screen_width = DT_INST_PROP(n, screen_width),                           \
         .screen_height = DT_INST_PROP(n, screen_height),                         \
-        .raw_x_min = DT_INST_PROP(n, raw_x_min),                            \
-        .raw_y_min = DT_INST_PROP(n, raw_y_min),                            \
-        .raw_x_max = DT_INST_PROP(n, raw_x_max),                            \
-        .raw_y_max = DT_INST_PROP(n, raw_y_max),                            \
         .inverted_x = DT_INST_PROP(n, inverted_x),                      \
         .inverted_y = DT_INST_PROP(n, inverted_y),                      \
         .swapped_x_y = DT_INST_PROP(n, swapped_x_y),                    \
