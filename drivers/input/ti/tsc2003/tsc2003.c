@@ -145,6 +145,13 @@ static int tsc2003_init(const struct device *dev)
     data->dev = dev;
 
     LOG_INF("INVERTED [%d][%d]", config->inverted_x, config->inverted_y);
+    /* Read X, Y, Z1, Z2 positions */
+    uint16_t value;
+    r = tsc2003_read_register(dev, CMD_MEASURE_X, &value);
+    if (r < 0) {
+        return r;
+    }
+    LOG_INF("FAIRY: [%d]", value);
 
     k_work_init(&data->work, tsc2003_work_handler);
 
@@ -193,14 +200,6 @@ static int tsc2003_init(const struct device *dev)
         LOG_ERR("Could not set gpio callback");
         return r;
     }
-
-    /* Read X, Y, Z1, Z2 positions */
-    uint16_t value;
-    r = tsc2003_read_register(dev, CMD_MEASURE_X, &value);
-    if (r < 0) {
-        return r;
-    }
-    LOG_INF("FAIRY: [%d]", value);
 
     return 0;
 }
