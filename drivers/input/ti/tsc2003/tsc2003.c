@@ -125,6 +125,15 @@ static int tsc2003_process(const struct device *dev)
             y = CLAMP(y, 0, config->screen_height);
         }
 
+        x = config->screen_width - x;
+        y = config->screen_height - y;
+
+        if (config->inverted_x) {
+            x = config->screen_width - x;
+        }
+        if (config->inverted_y) {
+            y = config->screen_height - y;
+        }
         input_report_abs(dev, INPUT_ABS_X, x, false, K_FOREVER);
         input_report_abs(dev, INPUT_ABS_Y, y, false, K_FOREVER);
         input_report_key(dev, INPUT_BTN_TOUCH, 1, true, K_FOREVER);
