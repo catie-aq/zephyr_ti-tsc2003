@@ -36,10 +36,7 @@ struct tsc2003_config {
     bool inverted_x;
     bool inverted_y;
 	bool swapped_x_y;
-//#ifdef CONFIG_INPUT_TSC2003_INTERRUPT
-    /** Interrupt GPIO information. */
     struct gpio_dt_spec int_gpio;
-//#endif
 };
 
 /** TSC2003 data. */
@@ -48,15 +45,9 @@ struct tsc2003_data {
     const struct device *dev;
     /** Work queue (for deferred read). */
     struct k_work work;
-//#ifdef CONFIG_INPUT_TSC2003_INTERRUPT
     /** Interrupt GPIO callback. */
     struct gpio_callback int_gpio_cb;
-//#else
     /** Timer (polling mode). */
-//    struct k_timer timer;
-//#endif
-    /** Last pressed state. */
-    bool pressed_old;
 };
 
 static int tsc2003_read_register(const struct device *dev, uint8_t cmd, uint16_t *data)
@@ -109,39 +100,30 @@ static int tsc2003_process(const struct device *dev)
         return ret;
     }
 
-    bool pressed = (z1 != 0 && z2 != 0);
 
-    if (pressed) {
-        int x = raw_x;
-        int y = raw_y;
+    int x = raw_x;
+    int y = raw_y;
 
-        if (config->screen_width > 0 && config->screen_height > 0) {
-            x = (((int)raw_x - config->raw_x_min) * config->screen_width) /
-                (config->raw_x_max - config->raw_x_min);
-            y = (((int)raw_y - config->raw_y_min) * config->screen_height) /
-                (config->raw_y_max - config->raw_y_min);
+    if (config->screen_width > 0 && config->screen_height > 0) {
+        x = (((int)raw_x - config->raw_x_min) * config->screen_width) /
+            (config->raw_x_max - config->raw_x_min);
+        y = (((int)raw_y - config->raw_y_min) * config->screen_height) /
+            (config->raw_y_max - config->raw_y_min);
 
-            x = CLAMP(x, 0, config->screen_width);
-            y = CLAMP(y, 0, config->screen_height);
-        }
-
-        x = config->screen_width - x;
-        y = config->screen_height - y;
-
-        if (config->inverted_x) {
-            x = config->screen_width - x;
-        }
-        if (config->inverted_y) {
-            y = config->screen_height - y;
-        }
-        input_report_abs(dev, INPUT_ABS_X, x, false, K_FOREVER);
-        input_report_abs(dev, INPUT_ABS_Y, y, false, K_FOREVER);
-        input_report_key(dev, INPUT_BTN_TOUCH, 1, true, K_FOREVER);
-    } else if (data->pressed_old && !pressed) {
-        input_report_key(dev, INPUT_BTN_TOUCH, 0, true, K_FOREVER);
+        x = CLAMP(x, 0, config->screen_width);
+        y = CLAMP(y, 0, config->screen_height);
     }
 
-    data->pressed_old = pressed;
+    if (config->inverted_x) {
+        x = config->screen_width - x;
+    }
+    if (config->inverted_y) {
+        y = config->screen_height - y;
+    }
+
+    input_report_abs(dev, INPUT_ABS_X, x, false, K_FOREVER);
+    input_report_abs(dev, INPUT_ABS_Y, y, false, K_FOREVER);
+    input_report_key(dev, INPUT_BTN_TOUCH, 1, true, K_FOREVER);
 
     return 0;
 }
@@ -151,13 +133,11 @@ static void tsc2003_work_handler(struct k_work *work)
     struct tsc2003_data *data = CONTAINER_OF(work, struct tsc2003_data, work);
     const struct tsc2003_config *config = data->dev->config;
 
-    //LOG_WRN("TEST");
     gpio_remove_callback(config->int_gpio.port, &data->int_gpio_cb);
     tsc2003_process(data->dev);
     gpio_add_callback(config->int_gpio.port, &data->int_gpio_cb);
 }
 
-//#ifdef CONFIG_INPUT_TSC2003_INTERRUPT
 static void tsc2003_isr_handler(const struct device *dev,
                    struct gpio_callback *cb, uint32_t pins)
 {
@@ -165,14 +145,6 @@ static void tsc2003_isr_handler(const struct device *dev,
 
     k_work_submit(&data->work);
 }
-//#else
-//static void tsc2003_timer_handler(struct k_timer *timer)
-//{
-//    struct tsc2003_data *data = CONTAINER_OF(timer, struct tsc2003_data, timer);
-//
-//    k_work_submit(&data->work);
-//}
-//#endif
 
 static int tsc2003_init(const struct device *dev)
 {
@@ -186,6 +158,8 @@ static int tsc2003_init(const struct device *dev)
     }
 
     data->dev = dev;
+
+    LOG_INF("INVERTED [%d][%d]", config->inverted_x, config->inverted_y);
 
     k_work_init(&data->work, tsc2003_work_handler);
 
@@ -209,7 +183,6 @@ static int tsc2003_init(const struct device *dev)
         }
     }
 
-//#ifdef CONFIG_INPUT_TSC2003_INTERRUPT
     if (!gpio_is_ready_dt(&config->int_gpio)) {
         LOG_ERR("Interrupt GPIO controller device not ready");
         return -ENODEV;
@@ -243,11 +216,6 @@ static int tsc2003_init(const struct device *dev)
         return r;
     }
     LOG_INF("FAIRY: [%d]", value);
-//#else
-//    k_timer_init(&data->timer, tsc2003_timer_handler, NULL);
-//    k_timer_start(&data->timer, K_MSEC(CONFIG_INPUT_TSC2003_PERIOD),
-//              K_MSEC(CONFIG_INPUT_TSC2003_PERIOD));
-//#endif
 
     return 0;
 }
@@ -262,9 +230,9 @@ static int tsc2003_init(const struct device *dev)
         .raw_y_min = DT_INST_PROP(n, raw_y_min),                            \
         .raw_x_max = DT_INST_PROP(n, raw_x_max),                            \
         .raw_y_max = DT_INST_PROP(n, raw_y_max),                            \
-        .inverted_x = DT_NODE_HAS_PROP(n, inverted_x),                      \
-        .inverted_y = DT_NODE_HAS_PROP(n, inverted_y),                      \
-        .swapped_x_y = DT_NODE_HAS_PROP(n, swapped_x_y),                    \
+        .inverted_x = DT_INST_PROP(n, inverted_x),                      \
+        .inverted_y = DT_INST_PROP(n, inverted_y),                      \
+        .swapped_x_y = DT_INST_PROP(n, swapped_x_y),                    \
         .int_gpio = GPIO_DT_SPEC_INST_GET_OR(n, int_gpios, {0}),                 \
     };                                                                      \
     static struct tsc2003_data tsc2003_data_##n;                            \
