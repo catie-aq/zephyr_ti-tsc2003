@@ -11,9 +11,10 @@ menuconfig TSC2003
 
 if TSC2003
 
-  config INPUT_TSC2003_INTERRUPT
-    bool "Interrupt"
+  config TSC2003_DEBOUNCE_MS
+    bool "Debounce timeout millisecond"
+    default 500
     help
-    Enable interrupt support (requires GPIO).
+      Timeout value for debounce filtering (milliseconds).
 
 endif # TSC2003

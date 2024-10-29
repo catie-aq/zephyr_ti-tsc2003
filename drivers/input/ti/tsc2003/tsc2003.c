@@ -134,6 +134,7 @@ static int tsc2003_init(const struct device *dev)
 
     data->dev = dev;
 
+    LOG_INF("DEBOUNCE [%d]", CONFIG_TSC2003_DEBOUNCE_MS);
     LOG_INF("INVERTED [%d][%d]", config->inverted_x, config->inverted_y);
     /* Read X, Y, Z1, Z2 positions */
     uint16_t value;
