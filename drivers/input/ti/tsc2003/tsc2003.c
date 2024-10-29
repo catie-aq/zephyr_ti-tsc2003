@@ -42,7 +42,7 @@ struct tsc2003_data {
     struct k_work work;
     /** Interrupt GPIO callback. */
     struct gpio_callback int_gpio_cb;
-    /** Timer (polling mode). */
+    /** Raw X position. */
     int x, y;
     uint16_t raw_x, raw_y, z1, z2;
 };
@@ -64,7 +64,7 @@ static int tsc2003_read_register(const struct device *dev, uint8_t cmd, uint16_t
     }
 
 	LOG_DBG("buf[0]: %d, buf[1]: %d", buf[0], buf[1]);
-    *data = (buf[0] << 4) | (buf[1] >> 4);  // Convert 12-bit value
+    *data = (buf[0] << 4) | (buf[1] >> 4); 
 	LOG_DBG("data: %d", *data);
     return 0;
 }
