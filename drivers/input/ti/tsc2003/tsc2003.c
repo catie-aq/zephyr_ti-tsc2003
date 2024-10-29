@@ -48,6 +48,8 @@ struct tsc2003_data {
     /** Interrupt GPIO callback. */
     struct gpio_callback int_gpio_cb;
     /** Timer (polling mode). */
+    int x, y;
+    uint16_t raw_x, raw_y, z1, z2;
 };
 
 static int tsc2003_read_register(const struct device *dev, uint8_t cmd, uint16_t *data)
@@ -76,53 +78,41 @@ static int tsc2003_process(const struct device *dev)
 {
     struct tsc2003_data *data = dev->data;
     const struct tsc2003_config *config = dev->config;
-    uint16_t raw_x, raw_y, z1, z2;
     int ret;
 
     /* Read X, Y, Z1, Z2 positions */
-    ret = tsc2003_read_register(dev, CMD_MEASURE_X, &raw_x);
+    ret = tsc2003_read_register(dev, CMD_MEASURE_X, &data->raw_x);
     if (ret < 0) {
         return ret;
     }
 
-    ret = tsc2003_read_register(dev, CMD_MEASURE_Y, &raw_y);
+    ret = tsc2003_read_register(dev, CMD_MEASURE_Y, &data->raw_y);
     if (ret < 0) {
         return ret;
     }
 
-    ret = tsc2003_read_register(dev, CMD_MEASURE_Z1, &z1);
+    ret = tsc2003_read_register(dev, CMD_MEASURE_Z1, &data->z1);
     if (ret < 0) {
         return ret;
     }
 
-    ret = tsc2003_read_register(dev, CMD_MEASURE_Z2, &z2);
+    ret = tsc2003_read_register(dev, CMD_MEASURE_Z2, &data->z2);
     if (ret < 0) {
         return ret;
     }
 
-
-    int x = raw_x;
-    int y = raw_y;
-
-    if (config->screen_width > 0 && config->screen_height > 0) {
-        x = (((int)raw_x - config->raw_x_min) * config->screen_width) /
-            (config->raw_x_max - config->raw_x_min);
-        y = (((int)raw_y - config->raw_y_min) * config->screen_height) /
-            (config->raw_y_max - config->raw_y_min);
-
-        x = CLAMP(x, 0, config->screen_width);
-        y = CLAMP(y, 0, config->screen_height);
-    }
+    data->x = (int)(data->raw_x * config->screen_width) / 4096;
+    data->y = (int)(data->raw_y * config->screen_height) / 4096;
 
     if (config->inverted_x) {
-        x = config->screen_width - x;
+        data->x = config->screen_width - data->x;
     }
     if (config->inverted_y) {
-        y = config->screen_height - y;
+        data->y = config->screen_height - data->y;
     }
 
-    input_report_abs(dev, INPUT_ABS_X, x, false, K_FOREVER);
-    input_report_abs(dev, INPUT_ABS_Y, y, false, K_FOREVER);
+    input_report_abs(dev, INPUT_ABS_X, data->x, false, K_FOREVER);
+    input_report_abs(dev, INPUT_ABS_Y, data->y, false, K_FOREVER);
     input_report_key(dev, INPUT_BTN_TOUCH, 1, true, K_FOREVER);
 
     return 0;
