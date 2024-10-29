@@ -86,16 +86,6 @@ static int tsc2003_process(const struct device *dev)
         return ret;
     }
 
-    ret = tsc2003_read_register(dev, CMD_MEASURE_Z1, &data->z1);
-    if (ret < 0) {
-        return ret;
-    }
-
-    ret = tsc2003_read_register(dev, CMD_MEASURE_Z2, &data->z2);
-    if (ret < 0) {
-        return ret;
-    }
-
     data->x = (int)(data->raw_x * config->screen_width) / 4096;
     data->y = (int)(data->raw_y * config->screen_height) / 4096;
 
