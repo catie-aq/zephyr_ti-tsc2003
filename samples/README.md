@@ -9,8 +9,9 @@ The example includes :
 
 # Requirements
 
-- Hardware: Zest Display LCD shield with TSC2003-compatible touch screen.
-- Any Zest Core board.
+- Hardware: 
+- Zest Display LCD shield.
+- Any Zest Core board and Zephyr-compatible board with I2C support.
 - Configuration Options:
 - `CONFIG_INPUT=y` in prj.conf to use INPUT API.
 - `CONFIG_I2C=y` in prj.conf to use I2C API.
