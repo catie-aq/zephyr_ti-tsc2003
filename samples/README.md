@@ -19,7 +19,7 @@ The example includes :
 
 # References
 
-- [ILI9163C Datasheet](https://www.ti.com/lit/ds/symlink/tsc2003.pdf?ts=1730931724485&ref_url=https%253A%252F%252Fwww.google.com%252F).
+- [TSC2003 Datasheet](https://www.ti.com/lit/ds/symlink/tsc2003.pdf?ts=1730931724485&ref_url=https%253A%252F%252Fwww.google.com%252F).
 
 # Building and Running
 
