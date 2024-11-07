@@ -26,9 +26,5 @@
         inverted_x;
         inverted_y;
       //  swapped_x_y;
-        raw_x_min = <200>;
-        raw_x_max = <3800>;
-        raw_y_min = <200>;
-        raw_y_max = <3800>;
 	 };
  };
