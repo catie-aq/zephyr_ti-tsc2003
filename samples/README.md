@@ -35,8 +35,10 @@ west flash
 ```shell
 *** Booting Zephyr OS build v3.7.0 ***
 
-Touch sample for touchscreen: TSC2003
-TOUCH PRESS X, Y: (32, 48)
-TOUCH RELEASE X, Y: (32, 48)
+sample: Touch sample for touchscreen: tsc2003@48
+[00:00:34.979,000] <inf> sample: TOUCH PRESS X, Y: (33, 130)
+[00:00:35.080,000] <inf> sample: TOUCH PRESS X, Y: (97, 105)
+[00:00:35.515,000] <inf> sample: TOUCH PRESS X, Y: (84, 88)
+[00:00:35.997,000] <inf> sample: TOUCH PRESS X, Y: (67, 83)
 
 ```

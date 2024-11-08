@@ -7,15 +7,4 @@ Texas Instruments tsc2003 touch screen driver for Zephyr OS.
 - Any Zest Core board
 
 ## Usage
-This touch screen driver can be used for basic touch functionalities, including X/Y position, pressure measurements, and sending touch events.
-
-### Build
-Use the Zest_Display_LCD shield:
-```bash
-west build -b <board> samples -- -DSHIELD=zest_display_lcd
-```
-
-Build the example:
-```bash
-west build -b <board> samples
-```
+This touch screen driver can be used for basic touch functionalities, including X/Y position and sending touch events.
