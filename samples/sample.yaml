@@ -1,0 +1,9 @@
+sample:
+  name: TSC2003 touchscreen sample
+tests:
+  sample.default:
+    tags: touchscreen
+    integration_platforms:
+      - zest_core_stm32l4a6rg
+    depends_on: i2c
+    extra_args: DTC_OVERLAY_FILE=sixtron_bus.overlay
