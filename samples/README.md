@@ -25,7 +25,7 @@ The example includes :
 
 ```shell
 cd <driver_directory>
-west build -p always -b <BOARD>
+west build -p always -b <BOARD> -- -D DTC_OVERLAY_FILE=sixtron_bus.overlay
 west flash
 ```
 
