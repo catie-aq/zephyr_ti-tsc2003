@@ -22,7 +22,7 @@ static struct {
 	bool pressed;
 } touch_point;
 
-static void touch_event_callback(struct input_event *evt)
+static void touch_event_callback(struct input_event *evt, void *user_data)
 {
 	if (evt->code == INPUT_ABS_X) {
 		touch_point.x = evt->value;
@@ -38,7 +38,7 @@ static void touch_event_callback(struct input_event *evt)
 	}
 }
 
-INPUT_CALLBACK_DEFINE(touch_dev, touch_event_callback);
+INPUT_CALLBACK_DEFINE(touch_dev, touch_event_callback, NULL);
 
 int main(void)
 {
